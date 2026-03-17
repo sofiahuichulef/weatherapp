@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clima sencillo</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 520px; margin: 40px auto; padding: 0 16px; }
+    input, button { font-size: 1rem; padding: 0.5rem; margin: 0.2rem 0; width: 100%; }
+    #resultado { margin-top: 1rem; }
+  </style>
+</head>
+<body>
+
+  <h1>Clima simple</h1>
+  <label for="ciudad">Ciudad:</label>
+  <input id="ciudad" type="text" placeholder="Ej: Madrid" />
+  <button id="btnBuscar">Buscar clima</button>
+
+  <div id="resultado"></div>
+
+  <script>
+    const inputCiudad = document.getElementById('ciudad');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const resultado = document.getElementById('resultado');
+
+    btnBuscar.addEventListener('click', async () => {
+      const ciudad = inputCiudad.value.trim();
+      if (!ciudad) {
+        resultado.textContent = 'Escribe el nombre de una ciudad.';
+        return;
+      }
+      resultado.textContent = 'Buscando...';
+
+      try {
+        // 1) Geocoding para obtener lat/lon
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(ciudad)}&count=1`);
+        if (!geoRes.ok) throw new Error('Error en geocoding');
+        const geoData = await geoRes.json();
+        if (!geoData.results || geoData.results.length === 0) {
+          resultado.textContent = `No se encontró la ciudad "${ciudad}".`;
+          return;
+        }
+
+        const { latitude, longitude, name, country } = geoData.results[0];
+
+        // 2) Consulta actual_weather de Open-Meteo
+        const climaRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=celsius`);
+        if (!climaRes.ok) throw new Error('Error al obtener clima');
+        const climaData = await climaRes.json();
+
+        const weather = climaData.current_weather;
+        if (!weather) {
+          resultado.textContent = 'No se obtuvo el clima actual.';
+          return;
+        }
+
+        resultado.innerHTML = `
+          <strong>${name}, ${country}</strong><br>
+          Temperatura actual: <strong>${weather.temperature.toFixed(1)}°C</strong><br>
+          Viento: ${weather.windspeed} km/h<br>
+          Hora: ${weather.time}
+        `;
+      } catch (error) {
+        console.error(error);
+        resultado.textContent = 'Hubo un error. Intenta de nuevo.';
+      }
+    });
+  </script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <input type="text" id="cityInput" placeholder="Enter city name" />
+        <button id="getWeatherBtn">Get Weather</button>
+        <div id="weatherResult"></div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

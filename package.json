@@ -1,0 +1,16 @@
+{
+  "name": "weather-app",
+  "version": "1.0.0",
+  "description": "A simple weather application that fetches weather data based on city input.",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "live-server src"
+  },
+  "keywords": [
+    "weather",
+    "api",
+    "javascript"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
