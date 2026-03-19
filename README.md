@@ -1,8 +1,9 @@
 # Weather App
 
-This is a simple weather application built using JavaScript. The application allows users to input the name of a city and fetches the current weather data from the Open-Meteo API. The weather information is then displayed in a user-friendly format.
+Aplicación simple de clima en **JavaScript**.  
+Recibe el nombre de una ciudad, utiliza la **API de geocodificación de Open-Meteo** para obtener sus coordenadas y, con ellas, consulta el **clima actual**.
 
-## Project Structure
+## Estructura del proyecto
 
 ```
 weather-app
@@ -15,15 +16,15 @@ weather-app
 └── README.md           # Project documentation
 ```
 
-## Getting Started
+## Antes de comenzar
 
 To get a local copy up and running follow these simple steps.
 
-### Prerequisites
+### Prerequisitos
 
 - Ensure you have [Node.js](https://nodejs.org/) installed on your machine.
 
-### Installation
+### Instalacion
 
 1. Clone the repository:
    ```
@@ -38,7 +39,7 @@ To get a local copy up and running follow these simple steps.
    npm install
    ```
 
-### Usage
+### Usabilidad
 
 1. Open `src/index.html` in your web browser.
 2. Enter the name of a city in the input field.
@@ -53,6 +54,46 @@ This application uses the Open-Meteo API to fetch weather data. You can find mor
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue.
 
-### License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+### Ejecutar la aplicación
+
+1. Lanza un servidor local (por ejemplo `live-server`):
+   ```bash
+npm start
+```
+2. Abre `http://127.0.0.1:8080` (o el puerto que use live-server).
+3. Ingresa un nombre de ciudad, haz clic en "Buscar clima".
+4. Verás la temperatura, viento y hora actual.
+
+## API usada
+
+- Geocoding: `https://geocoding-api.open-meteo.com/v1/search`.
+- Clima actual: `https://api.open-meteo.com/v1/forecast?current_weather=true`.
+
+## Pruebas (testing)
+
+Se agregaron pruebas unitarias con `Vitest` en `src/app.test.js` para validar:
+
+1. `getCoordinatesForCity(city)`:
+   - Busca coordenadas y devuelve `name`, `country`, `latitude`, `longitude`.
+   - Lanza error si no se encuentra la ciudad.
+2. `getWeatherForCoordinates(latitude, longitude)`:
+   - Devuelve `current_weather`.
+   - Lanza error si la API responde `ok: false`.
+3. `getWeatherByCity(city)`:
+   - Integra geocoding + clima (flujo completo).
+4. `formatWeatherHtml(result)`:
+   - Devuelve HTML con ciudad, país, temperatura y viento.
+
+### Ejecutar tests
+
+```bash
+npm test
+```
+
+Deberías ver todos los tests en verde.
+
+
+## Licencia
+
+MIT.
