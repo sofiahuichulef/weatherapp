@@ -2,9 +2,11 @@
   "name": "weather-app",
   "version": "1.0.0",
   "description": "A simple weather application that fetches weather data based on city input.",
+  "type": "module",
   "main": "src/app.js",
   "scripts": {
-    "start": "live-server src"
+    "start": "live-server src",
+    "test": "vitest"
   },
   "keywords": [
     "weather",
@@ -12,5 +14,8 @@
     "javascript"
   ],
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "vitest": "^4.1.0"
+  }
 }
