@@ -3,6 +3,7 @@
 Aplicación simple de clima en JavaScript. Recibe un nombre de ciudad, usa la API de geocodificación de Open-Meteo para obtener coordenadas, y con esas coordenadas obtiene el clima actual desde Open-Meteo.
 
 ## Estructura del proyecto
+## Estructura del proyecto
 
 ```
 weather-app
