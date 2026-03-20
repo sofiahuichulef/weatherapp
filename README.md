@@ -23,23 +23,23 @@ weather-app
 ### Instalación
 
 1. Clona el repositorio:
-   ```bash
-git clone <repository-url>
+```bash
+    git clone <repository-url>
 ```
 2. Ve a la carpeta del proyecto:
-   ```bash
-cd weather-app
+```bash
+   cd weather-app
 ```
 3. Instala dependencias:
-   ```bash
-npm install
+ ```bash
+ npm install
 ```
 
 ### Ejecutar la aplicación
 
 1. Lanza un servidor local (por ejemplo `live-server`):
-   ```bash
-npm start
+```bash
+    npm start
 ```
 2. Abre `http://127.0.0.1:8080` (o el puerto que use live-server).
 3. Ingresa un nombre de ciudad, haz clic en "Buscar clima".
