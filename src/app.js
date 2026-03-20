@@ -36,6 +36,21 @@ export async function getWeatherForCoordinates(latitude, longitude) {
   return data.current_weather;
 }
 
+/**
+ * Obtiene el clima actual para una ciudad usando los servicios de Open-Meteo.
+ *
+ * 1) Busca coordenadas de la ciudad con la API de geocodificación.
+ * 2) Consulta el clima actual de esas coordenadas con la API de pronóstico.
+ *
+ * @param {string} city - Nombre de la ciudad a buscar (por ejemplo, "Santiago").
+ * @returns {Promise<{city: string, country: string, latitude: number, longitude: number, weather: object}>} Un objeto con la ciudad, el país, latitud, longitud y datos de clima.
+ * @throws {Error} Si falta el nombre de ciudad, la API de geocodificación falla, no se encuentra la ciudad o la API de clima falla.
+ *
+ * @example
+ * const resultado = await getWeatherByCity('Santiago');
+ * console.log(resultado.city);
+ * console.log(resultado.weather.temperature);
+ */
 export async function getWeatherByCity(city) {
   const place = await getCoordinatesForCity(city);
   const weather = await getWeatherForCoordinates(place.latitude, place.longitude);
