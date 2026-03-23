@@ -78,5 +78,6 @@ describe('weather app logic', () => {
     expect(html).toContain('Madrid, ES');
     expect(html).toContain('10.4°C');
     expect(html).toContain('7.1 km/h');
+    expect(html).toContain('🌧️'); // Ícono de lluvia para temp ~10°C
   });
 });

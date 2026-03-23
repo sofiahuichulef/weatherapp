@@ -1,3 +1,43 @@
+const CACHE_PREFIX = 'weatherapp:cache:';
+
+function setCacheWithExpiry(key, data, ttlMs) {
+  if (typeof window === 'undefined' || !window.localStorage) return;
+  const value = {
+    data,
+    expiresAt: Date.now() + ttlMs,
+  };
+  localStorage.setItem(CACHE_PREFIX + key, JSON.stringify(value));
+}
+
+function getCacheWithExpiry(key) {
+  if (typeof window === 'undefined' || !window.localStorage) return null;
+  const raw = localStorage.getItem(CACHE_PREFIX + key);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || !parsed.expiresAt) {
+      localStorage.removeItem(CACHE_PREFIX + key);
+      return null;
+    }
+    if (Date.now() > parsed.expiresAt) {
+      localStorage.removeItem(CACHE_PREFIX + key);
+      return null;
+    }
+    return parsed.data;
+  } catch {
+    localStorage.removeItem(CACHE_PREFIX + key);
+    return null;
+  }
+}
+
+function getCacheKeyForCity(city) {
+  return `weather-${city.trim().toLowerCase()}`;
+}
+
+function hasNetworkConnection() {
+  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+}
+
 export async function getCoordinatesForCity(city) {
   if (!city || !city.trim()) {
     throw new Error('City name is required');
@@ -52,15 +92,42 @@ export async function getWeatherForCoordinates(latitude, longitude) {
  * console.log(resultado.weather.temperature);
  */
 export async function getWeatherByCity(city) {
+  if (!city || !city.trim()) {
+    throw new Error('City name is required');
+  }
+
+  const cacheKey = getCacheKeyForCity(city);
+  const cached = getCacheWithExpiry(cacheKey);
+  if (cached) {
+    return {
+      ...cached,
+      fromCache: true,
+    };
+  }
+
+  if (!hasNetworkConnection()) {
+    if (cached) {
+      return {
+        ...cached,
+        fromCache: true,
+      };
+    }
+    throw new Error('No internet connection and no cached data available.');
+  }
+
   const place = await getCoordinatesForCity(city);
   const weather = await getWeatherForCoordinates(place.latitude, place.longitude);
-  return {
+  const result = {
     city: place.name,
     country: place.country,
     latitude: place.latitude,
     longitude: place.longitude,
     weather,
   };
+
+  // Cache 10 minutos (600000 ms)
+  setCacheWithExpiry(cacheKey, result, 10 * 60 * 1000);
+  return result;
 }
 
 export function formatWeatherHtml(result) {
@@ -68,7 +135,21 @@ export function formatWeatherHtml(result) {
     return 'No weather data';
   }
 
+  const temp = result.weather.temperature;
+  let icon = '🌤️'; // Default
+
+  if (temp >= 25) {
+    icon = '☀️'; // Sol
+  } else if (temp >= 15) {
+    icon = '⛅'; // Nublado
+  } else if (temp >= 5) {
+    icon = '🌧️'; // Lluvia
+  } else {
+    icon = '❄️'; // Nieve
+  }
+
   return `
+    <div style="text-align: center; font-size: 3em; margin-bottom: 10px;">${icon}</div>
     <strong>${result.city}, ${result.country}</strong><br>
     Temperatura actual: <strong>${result.weather.temperature.toFixed(1)}°C</strong><br>
     Viento: ${result.weather.windspeed} km/h<br>
@@ -94,9 +175,16 @@ if (typeof window !== 'undefined') {
       try {
         const resultadoClima = await getWeatherByCity(ciudad);
         resultado.innerHTML = formatWeatherHtml(resultadoClima);
+        if (resultadoClima.fromCache) {
+          resultado.innerHTML += '<div style="font-size:0.85rem; color:#555; margin-top:0.35rem;">Mostrado desde cache (datos recientes). Si estás sin internet, este resultado se seguirá mostrando hasta que caduque.</div>';
+        }
       } catch (error) {
         console.error(error);
-        resultado.textContent = 'Hubo un error. Intenta de nuevo.';
+        if (error.message.includes('No internet connection')) {
+          resultado.textContent = 'Sin conexión y no hay datos guardados en cache.';
+        } else {
+          resultado.textContent = 'Hubo un error. Intenta de nuevo.';
+        }
       }
     });
   }
