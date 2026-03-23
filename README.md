@@ -3,7 +3,6 @@
 Aplicación simple de clima en JavaScript. Recibe un nombre de ciudad, usa la API de geocodificación de Open-Meteo para obtener coordenadas, y con esas coordenadas obtiene el clima actual desde Open-Meteo.
 
 ## Estructura del proyecto
-## Estructura del proyecto
 
 ```
 weather-app
@@ -17,8 +16,6 @@ weather-app
 └── README.md           # Esta documentación
 ```
 
-## Cómo usar
-
 ### Requisitos
 
 - [Node.js](https://nodejs.org/) (para ejecutar tests con Vitest y servidor local)
@@ -26,23 +23,23 @@ weather-app
 ### Instalación
 
 1. Clona el repositorio:
-   ```bash
-git clone <repository-url>
+```bash
+    git clone <repository-url>
 ```
 2. Ve a la carpeta del proyecto:
-   ```bash
-cd weather-app
+```bash
+   cd weather-app
 ```
 3. Instala dependencias:
-   ```bash
-npm install
+ ```bash
+ npm install
 ```
 
 ### Ejecutar la aplicación
 
 1. Lanza un servidor local (por ejemplo `live-server`):
-   ```bash
-npm start
+```bash
+    npm start
 ```
 2. Abre `http://127.0.0.1:8080` (o el puerto que use live-server).
 3. Ingresa un nombre de ciudad, haz clic en "Buscar clima".
